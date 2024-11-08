@@ -1,5 +1,4 @@
-from math import trunc
-
+import re
 from selenium.webdriver.common.by import By
 import zipcode
 import time
@@ -9,12 +8,14 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
 
+
+file_path = "./chromedriver"
 def get_zipcode_list(items):
-    if type(items) == str:
+    if  isinstance(items, str):
         zipcode_obj = zipcode.islike(items)
         output = [str(i).split("", 1)[1].split(">")[0] for i in zipcode_obj]
 
-    elif type(items) == list:
+    elif isinstance(items, list):
         zipcode_obj = [n for i in items for n in zipcode.islike(str(i))]
         output = [str(i).split("", 1)[1].split(">")[0] for i in zipcode_obj]
 
@@ -24,13 +25,13 @@ def get_zipcode_list(items):
 
 
 def init_driver(file_path):
-    drivwr = webdriver.Chrome(executable_path=file_path)
-    drivwr.wait = WebDriverWait(drivwr, 5)
-    return (drivwr)
+    driver = webdriver.Chrome(executable_path=file_path)
+    driver.wait = WebDriverWait(driver, 5)
+    return (driver)
 
 
-def navigate_to_website(drivwr, url):
-    drivwr.get(url)
+def navigate_to_website(driver, url):
+    driver.get(url)
 
 
 def click_button(driver):
@@ -121,14 +122,106 @@ def get_html(driver):
 
 def get_list(list_obj):
     output = []
-    try:
-        for i in list_obj:
+    for i in list_obj:
             htmmSplit = i.split("", id="zipid_")[1:]
             output += htmmSplit
-        print(str(len(output)) + " Home listing scrapped. ")
-        return output
+    print(str(len(output)) + " Home listing scrapped. ")
+    return output
 
 
-def address_str(soup_obj):
+def str_address(soup_obj):
     try:
         street = soup_obj.find("span", {"itemprop": "streetAddress"}).get_text().strip()
+    except (ValueError, AttributeError):
+        street = "NA"
+    if len(street) == 0 or street == "null":
+        street = "NA"
+    return (street)
+
+
+def get_city(soup_obj):
+    try:
+        city = soup_obj.find("span", {"itemprop": "addressLocality"}).get_text().strip()
+    except (ValueError, AttributeError):
+        city = "NA"
+    if len(city) == 0 or city == "null":
+        city = "NA"
+    return (city)
+
+
+def get_neighbourhood(soup_obj):
+    try:
+        neighbor = soup_obj.find("span", {"itemprop": "addressNeighbour"}).get_text().strip()
+    except (ValueError, AttributeError):
+        neighbor = "NA"
+    if len(neighbor) == 0 or neighbor == "null":
+        neighbor = "null"
+    return (neighbor)
+
+
+def region(soup_obj):
+    try:
+        state = soup_obj.find("span",{"itemprop": "addressRegion"}).get_text().strip()
+    except (ValueError, AttributeError):
+        state = "NA"
+    if len(state) == 0 or state == "null":
+        state = "NA"
+    return (state)
+
+
+def zipcode(soup_obj):
+    try:
+        zip = soup_obj.find("span", {"itemprop": "postalCode"}).get_text().strip()
+    except (ValueError, AttributeError):
+        zip = "NA"
+    if len(zip) == 0 or zip == "null":
+        zip = "NA"
+    return (zip)
+
+
+def house_prices(soup_obj, list_obj):
+    try:
+        price = soup_obj.find("span", {"class": "zsg-photo-card-price"}).get_text().strip()
+    except (ValueError, AttributeError):
+
+        try:
+            price = [n for n in list_obj
+                     if any(["$" in n, "K" in n, "k" in n])]
+            if len(price) > 0:
+                price = price[0].split(" ")
+                price = [n for n in price if re.search("[0-9]", n) is not None]
+                if len(price) > 0:
+                    price = price[0]
+                else:
+                    price = "NA"
+            else:
+                price = "NA"
+        except (ValueError, AttributeError):
+            price = "NA"
+    if len(price) == 0 or price == "null":
+        price = "NA"
+    if price != "NA":
+        price = price.replace(",", " ").replace("+", " ").replace("$", "")
+        if any(["K" in price, "K" in price]):
+            price = price.lower().split("K")[0].strip()
+            if "." not in price:
+                price = price + "000000"
+            else:
+                priceLen = len(price.split(".")[0]) +6
+                price = price.replace(".", "")
+                diff = priceLen - len(price)
+
+                price = price + (diff * "0")
+        if len(price) == 0:
+            price = "NA"
+    return (price)
+
+
+def card_details(soup_obj):
+    try:
+        card = soup_obj.find({"class": "zsg-photo-card-info"}).get_text().strip()
+    except (ValueError, AttributeError):
+        card = "NA"
+    if len(card) == 0 or card == "null":
+        card = "NA"
+    return (card)
