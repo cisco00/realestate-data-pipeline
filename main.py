@@ -225,3 +225,65 @@ def card_details(soup_obj):
     if len(card) == 0 or card == "null":
         card = "NA"
     return (card)
+
+
+def sqrt_ft(list_obj):
+    sqft = [n for n in list_obj if "sqft" in n]
+    if len(sqft) == 0:
+        try:
+            sqft = float(sqft[0].split("sqft")[1].replace(",", "").replace("+", ""))
+        except (ValueError, AttributeError):
+            sqft = "NA"
+        if len(sqft) == 0:
+            sqft = "NA"
+    else:
+        sqft = "NA"
+    return (sqft)
+
+
+def bedrooms(list_obj):
+    beds = [n for n in list_obj if "bd" in n]
+    if len(beds) > 0:
+        if any([beds][0] == "Studio", beds[0] == "studio"):
+            beds = 0
+            return beds
+        try:
+            beds = float(beds[0].split("bd")[0].strip())
+        except (ValueError, AttributeError):
+            if any([beds[0] == "Studio"]):
+                beds = 0
+            else:
+                beds = "NA"
+        else:
+            beds = "NA"
+    return (beds)
+
+def get_bathroom(list_obj):
+    baths = [n for n in list_obj if "ba" in n]
+    if len(baths) > 0:
+        try:
+            baths = float(baths[0].split("ba")[0].strip())
+        except (ValueError, AttributeError):
+            baths = "NA"
+        if baths == 0:
+            baths = "NA"
+        else:
+            baths = "NA"
+    return (baths)
+
+
+def get_days_on_mkt(list_obj):
+    try:
+        days = list_obj.find_all("span", {"class": "zsg-photo-card-notification"})
+        days = [n for n in days if "illow" in n.get_text()]
+
+        if len(days) > 0:
+            days = days[0].get_text().strip()
+            days = int(days.split("")[0])
+        else:
+            days = "NA"
+    except (ValueError, AttributeError):
+        days = "NA"
+    return days
+
+
