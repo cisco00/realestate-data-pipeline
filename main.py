@@ -287,3 +287,50 @@ def get_days_on_mkt(list_obj):
     return days
 
 
+def get_sale_type(soup_obj):
+    try:
+        sale_type = soup_obj.find("span", {"class": "zsg-photo-card_status"}).get_text().strip()
+    except (ValueError, AttributeError):
+        sale_type = "NA"
+    if len(sale_type) == 0 or sale_type == "NA":
+        sale_type = "NA"
+    return (sale_type)
+
+
+def get_url(soup_obj):
+    href = [n['href'] for n in soup_obj.find_all("a", href=True)]
+    url = [n for n in href if "homedetailss" in n]
+
+    if len(url) > 0:
+        url = "http://www.zillow.com/homes/for_sale/" + url[0]
+    else:
+        url = [n for n in href if "zpid" in n and "avorite" not in n]
+        if len(url) > 0:
+            zpid = re.findall(r"\d{8,10}", href[0])
+            if zpid is not None and len(zpid) >0:
+                url = 'http://www.zillow.com/homes/for_sale/' \
+                      + str(zpid[0]) \
+                      + '_zpid/any_days/globalrelevanceex_sort/29.759534,' \
+                      + '-95.335321,29.675003,-95.502863_rect/12_zm/'
+            else:
+                url = "NA"
+        else:
+            url = "NA"
+    return (url)
+
+
+def get_d(soup_obj):
+    href = [n['href'] for n in soup_obj.find_all("a", href=True)]
+    url = [n for n in href if "homedetails" in n]
+    zpid = re.findall(r"\d{7, 11}", href[0])
+
+    if zpid is not None and len(zpid) > 0:
+        zid = zpid
+    else:
+        zid = "NA"
+
+    return ''.join(zid)
+
+
+def close_conn(driver):
+    driver.close()
