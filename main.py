@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.chrome.service import Service
 
 
 file_path = "./chromedriver"
@@ -25,9 +26,10 @@ def get_zipcode_list(items):
 
 
 def init_driver(file_path):
-    driver = webdriver.Chrome(executable_path=file_path)
+    service = Service(file_path)
+    driver = webdriver.Chrome(service=service)
     driver.wait = WebDriverWait(driver, 5)
-    return (driver)
+    return driver
 
 
 def navigate_to_website(driver, url):
