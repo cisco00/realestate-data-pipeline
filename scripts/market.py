@@ -18,7 +18,7 @@ df = pd.DataFrame({
     'zpid': []
 })
 
-local_storage = ("/home/oem/PycharmProjects/RealEstate_Data_Pipeline/realestate_raw_data_mkt")
+local_storage = ("/home/oem/PycharmProjects/RealEstate_Data_Pipeline/realestate_raw_data_storage")
 
 if not os.path.exists(local_storage):
     os.makedirs(local_storage)
@@ -26,7 +26,7 @@ if not os.path.exists(local_storage):
 else:
     print("Local storage directory already exists")
 
-files = [file for file in os.listdir(local_storage) if os.path.isfile(os.path.join(local_storage, file))]
+files = [f for f in os.listdir(local_storage) if os.path.isfile(os.path.join(local_storage, f))]
 if files:
     for file_name in files:
         file_path = os.path.join(local_storage, file_name)  # Construct the file path
@@ -54,7 +54,6 @@ if files:
                 new_obs.append(zl.get_url(soup))
                 new_obs.append(zl.get_zipcode_list(soup))
                 new_obs.append(zl.get_d(soup))
-                new_obs.append(zl.house_prices(soup))
 
                 if len(new_obs) == len(df.columns):
                     df.loc[len(df.index)] = new_obs
