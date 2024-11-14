@@ -1,14 +1,9 @@
-from os.path import exists
-
 from bs4 import BeautifulSoup
 from scripts import zillow_scrapping_scripts as zl
 import pandas as pd
-from io import StringIO
 import time
 import os
 import ast
-
-from scripts.zillow_scrapping_scripts import bedrooms
 
 df = pd.DataFrame({
     'address': [],
@@ -23,33 +18,31 @@ df = pd.DataFrame({
     'zpid': []
 })
 
-# Creating path for local storage for data
 local_storage = ("/home/oem/PycharmProjects/RealEstate_Data_Pipeline/realestate_raw_data_storage")
 
-#Checking if file exist
-if not os.path.exists(local_storage) == True:
+if not os.path.exists(local_storage):
     os.makedirs(local_storage)
-    print("file path created successfully")
+    print("Local storage directory created successfully")
 else:
-    print("Fails to create local storage for data")
+    print("Local storage directory already exists")
 
 files = [f for f in os.listdir(local_storage) if os.path.isfile(os.path.join(local_storage, f))]
 if files:
-    for f in files:
-        with open(local_storage + f, "r", encoding="utf-8") as f:
+    for file_name in files:
+        file_path = os.path.join(local_storage, file_name)  # Construct the file path
+
+        with open(file_path, "r", encoding="utf-8") as f:
             text = f.read()
             try:
-                files = ast.literal_eval(text)
+                content = ast.literal_eval(text)  # Parse the file content
             except (ValueError, SyntaxError) as e:
-                print(f"Error parsing {files}: {e}")
+                print(f"Error parsing {file_name}: {e}")
                 continue
 
-            for fil in range(len(files)):
-                soup = BeautifulSoup(files[fil], "html.parser")
-
+            for item in content:
+                soup = BeautifulSoup(item, "html.parser")
                 new_obs = []
 
-                # Extract information using custom functions
                 card_info = zl.card_details(soup)
                 new_obs.append(zl.str_address(soup))
                 new_obs.append(zl.get_bathroom(card_info))
@@ -65,22 +58,21 @@ if files:
                 if len(new_obs) == len(df.columns):
                     df.loc[len(df.index)] = new_obs
 
-        print("Data processing completed and files parsed")
-    else:
-        print("No files found in the local storage directory")
+    print("Data processing completed and files parsed")
+else:
+    print("No files found in the local storage directory")
 
 columns = ['address', 'city', 'state', 'zip', 'sqft', 'bedrooms',
            'bathrooms', 'sale_type', 'url', 'zpid']
-
 df = df[columns]
-localtime = time.localtime(time.time())
+
+# Create a timestamp for the filename
+localtime = time.localtime()
 timeString = time.strftime("%Y%m%d%H%M%S", localtime)
 
-files = os.path.join(local_storage, f"parsed_sold_AZ_{timeString}.csv")
+# Construct the file path for the CSV
+csv_file_path = os.path.join(local_storage, f"parsed_sold_AZ_{timeString}.csv")
 
-#Saving Data
-data = df.to_csv(local_storage, index=False)
-print("Data saved successfully")
-
-
-
+# Save the DataFrame to a CSV file
+df.to_csv(csv_file_path, index=False)
+print(f"Data saved successfully to {csv_file_path}")
