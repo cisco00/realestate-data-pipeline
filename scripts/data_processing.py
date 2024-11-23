@@ -1,7 +1,5 @@
 import pandas as pd
 import os
-from pyspark.sql import SparkSession
-
 
 local_path = "/home/oem/PycharmProjects/RealEstate_Data_Pipeline/realestate_raw_data_storage"
 output_df = "/home/oem/PycharmProjects/RealEstate_Data_Pipeline/spark-warehouse"
