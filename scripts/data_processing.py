@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-local_path = "/home/oem/PycharmProjects/RealEstate_Data_Pipeline/realestate_raw_data_storage"
+local_path = "/zillow_realestate_raw_data_storage"
 output_df = "/home/oem/PycharmProjects/RealEstate_Data_Pipeline/spark-warehouse"
 
 def files_names(path):

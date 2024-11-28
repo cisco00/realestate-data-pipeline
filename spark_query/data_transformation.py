@@ -9,7 +9,7 @@ import pandas as pd
 spark = SparkSession.builder.appName("Spark Data").getOrCreate()
 spark.sparkContext.setLogLevel("ERROR")
 
-path_directory = "/home/oem/PycharmProjects/RealEstate_Data_Pipeline/realestate_raw_data_storage"
+path_directory = "/zillow_realestate_raw_data_storage"
 
 for file in os.listdir(path_directory):
     file_path = os.path.join(path_directory, file)
