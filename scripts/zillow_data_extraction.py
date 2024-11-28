@@ -11,7 +11,7 @@ import time
 
 class Zillow_Estate:
     def __init__(self):
-        self.download_directory = "/home/oem/PycharmProjects/RealEstate_Data_Pipeline/realestate_raw_data_storage"
+        self.download_directory = "/home/oem/PycharmProjects/RealEstate_Data_Pipeline/zillow_realestate_raw_data_storage"
         if not os.path.exists(self.download_directory):
             os.makedirs(self.download_directory)
         self.options = webdriver.ChromeOptions()

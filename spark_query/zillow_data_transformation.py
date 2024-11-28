@@ -19,9 +19,6 @@ def load_data(path_directory, path_direct2):
             print(f"These col: {cols} has mixed data type in df2")
     return df1, df2
 
-#Loading files into python environemnts
-# df1, df2 = load_data(path_directory, path_direct2)
-
 
 # Correcting the dtype of columns
 def correcting_dtypes(df1, df2):
@@ -40,8 +37,6 @@ def correcting_dtypes(df1, df2):
             df2[col] = df2[col].astype(str)
 
     return df1, df2
-
-# df1, df2 = correcting_dtypes(df1, df2)
 
 # Droping abnormal columns
 def clean_data(df):
@@ -70,9 +65,3 @@ def implementing_func(df1, df2):
     print("data is ready to be loaded in DB")
 
     return df_clean, df2_clean
-
-path_directory = "/home/oem/PycharmProjects/RealEstate_Data_Pipeline/processed_data/.ipynb_checkpoints/combined_data-checkpoint.csv"
-path_direct2 = "/home/oem/PycharmProjects/RealEstate_Data_Pipeline/spark_query/dataframe1.csv"
-
-# Run the pipeline
-df1_clean, df2_clean = implementing_func(path_directory, path_direct2)
