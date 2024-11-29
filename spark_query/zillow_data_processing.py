@@ -1,5 +1,4 @@
 import pandas as pd
-from scripts.data_transformation_scripts import calculate_quarter_prices, droping_columns
 
 path_directory = "/home/oem/PycharmProjects/RealEstate_Data_Pipeline/processed_data/.ipynb_checkpoints/combined_data-checkpoint.csv"
 path_direct2 = "/home/oem/PycharmProjects/RealEstate_Data_Pipeline/spark_query/dataframe1.csv"
@@ -41,12 +40,9 @@ def correcting_dtypes(df1, df2):
 # Droping abnormal columns
 def clean_data(df):
     drop_cols = ['City', 'StateCodeFIPS', 'MunicipalCodeFIPS']
-    # Drop columns that exist in the DataFrame, ignore others
     df = df.drop(columns=[col for col in drop_cols if col in df.columns], errors='ignore')
 
     print(f"Number of duplicate rows: {df.duplicated(keep='first').sum()}")
-
-    # Fill NaN values with 0
     df.fillna(0, inplace=True)
     return df
 

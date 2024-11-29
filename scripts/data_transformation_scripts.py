@@ -1,5 +1,16 @@
 import pandas as pd
 
+
+def drop_col(df):
+    col_drop = df.iloc[:, 8:306]
+
+    for col in col_drop:
+        if col in df.columns:
+            print(f"Dropped column: {col}")
+            df = df.drop(col, axis=1)
+    return df
+
+
 def calculate_quarter_prices(df, quarter, year_start=2000, year_end=2024):
     quarter_months = {
         "first": ["01-31", "02-28", "03-31"],
@@ -29,22 +40,11 @@ def calculate_quarter_prices(df, quarter, year_start=2000, year_end=2024):
             print(f"Warning: Missing columns for {year} {quarter}: {missing_cols}")
             continue
 
-        df1 = df
-        df1 = df1.copy()
-
-        # Calculate the average and add the new column
+        # Calculate the average price of houses
         column_name = f"{year}_{quarter}_qtr_prices"
-        df1[column_name] = df1[date_columns].mean(axis=1).round(2)
+        df[column_name] = df[date_columns].mean(axis=1).round(2)
 
-    return df1
-
-
-def droping_columns(df):
-    selected_cols = df.iloc[:, 8:309]
-    df1 = selected_cols.copy()
-    df1 = df1.drop(columns=df1.columns)
-
-    return df1
+    return df
 
 
 def create_state_dfs(df):
@@ -62,4 +62,22 @@ def create_state_dfs(df):
     return state_dfs
 
 
+def processed_quarters(df1):
+    first_qtrs_df = calculate_quarter_prices(df1, quarter="first")
+    second_qtrs_df = calculate_quarter_prices(df1, quarter="second")
+    third_qtrs_df = calculate_quarter_prices(df1, quarter="third")
+    fourth_qtrs_df = calculate_quarter_prices(df1, quarter="fourth")
+
+    comm_col = df1.iloc[:, 0:8]
+    drop_cols = df1.iloc[:, 0:306].columns
+
+    # # Drop specified columns in each DataFrame if they exist
+    first_qtrs_df.drop(columns=drop_cols, inplace=True, errors="ignore")
+    second_qtrs_df.drop(columns=drop_cols, inplace=True, errors="ignore")
+    third_qtrs_df.drop(columns=drop_cols, inplace=True, errors="ignore")
+    fourth_qtrs_df.drop(columns=drop_cols, inplace=True, errors="ignore")
+
+    df = pd.concat([comm_col, first_qtrs_df, second_qtrs_df, third_qtrs_df, fourth_qtrs_df], axis=1)
+
+    return df
 
