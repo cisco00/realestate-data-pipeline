@@ -1,4 +1,7 @@
 import pandas as pd
+import airflow
+from airflow import DAG
+
 
 path_directory = "/home/oem/PycharmProjects/RealEstate_Data_Pipeline/processed_data/.ipynb_checkpoints/combined_data-checkpoint.csv"
 path_direct2 = "/home/oem/PycharmProjects/RealEstate_Data_Pipeline/spark_query/dataframe1.csv"
@@ -37,7 +40,7 @@ def correcting_dtypes(df1, df2):
 
     return df1, df2
 
-# Droping abnormal columns
+# cleaning data
 def clean_data(df):
     drop_cols = ['City', 'StateCodeFIPS', 'MunicipalCodeFIPS']
     df = df.drop(columns=[col for col in drop_cols if col in df.columns], errors='ignore')

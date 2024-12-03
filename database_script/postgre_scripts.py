@@ -98,5 +98,5 @@ def create_tables(df, table_name, db_name, db_pass, user):
 table_names = ["TexasTable", "FloridaTable", "OhioTable"]
 datasets = [tx_df, fl_df, oh_df]
 
-for dataset, table_name in zip(table_names, datasets):
+for dataset, table_name in zip(datasets, table_names):
         create_tables(tx_df, table_name, db_name, db_pass, user)
