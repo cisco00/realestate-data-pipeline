@@ -6,6 +6,11 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from etldataprocessing.zillow_data_cleaning import implementing_func
 from etldataprocessing.data_transformation_scripts import create_state_dfs, processed_quarters
+from etldataprocessing.zillow_data_extraction import Zillow_Estate
+
+def extract_method():
+    extract_data = Zillow_Estate()
+    extract_data.main()
 
 path_direct2 = "/home/oem/PycharmProjects/RealEstate_Data_Pipeline/spark_query/dataframe1.csv"
 
@@ -128,8 +133,15 @@ dag = DAG(
     catchup=False
 )
 
+data_extract = PythonOperator(
+    task_id="data_extract",
+    python_callable=extract_method,
+    dag=dag)
+
 etl_task = PythonOperator(
     task_id="etl_task",
     python_callable=loading_data_to_postgres,
     dag=dag
 )
+
+data_extract >> etl_task
