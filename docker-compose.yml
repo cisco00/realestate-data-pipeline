@@ -1,0 +1,69 @@
+services:
+  postgresdb:
+    image: postgres:15
+    container_name: postgresdb
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres:/docker-entrypoint-initdb.d
+    networks:
+      - airflow_network
+
+  airflow:
+    image: apache/airflow:2.7.0  # Corrected image name
+    container_name: airflow-webserver
+    depends_on:
+      - postgresdb
+    environment:
+      AIRFLOW_CORE_LOAD_EXAMPLES: "False"
+      AIRFLOW_CORE_SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgresdb:5432/airflow
+      AIRFLOW__WEBSERVER__WEB_SERVER_PORT: 8000
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./package.json:/opt/airflow/package.json
+    ports:
+      - "8000:8000"
+    command: webserver
+    networks:
+      - airflow_network
+
+  airflow_scheduler:
+    image: apache/airflow:2.7.0  # Corrected image name
+    container_name: airflow-scheduler
+    depends_on:
+      - postgresdb
+      - airflow
+    environment:
+      AIRFLOW_CORE_LOAD_EXAMPLES: "False"
+      AIRFLOW_CORE_SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgresdb:5432/airflow
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./package.json:/opt/airflow/package.json
+    command: scheduler
+    networks:
+      - airflow_network
+
+  custom_etl:
+    build:
+      context: ./airflow
+    container_name: customer_etl
+    depends_on:
+      - postgresdb
+    environment:
+      DB_NAME: airflow
+      DB_USER: airflow
+      DB_PASS: airflow
+      DB_EMAIL: airflow
+    volumes:
+      - ./etldataprocessing:/app/etldataprocessing
+      - ./package.json:/app/package.json
+    networks:
+      - airflow_network
+
+networks:
+  airflow_network:
+    driver: bridge
