@@ -1,40 +1,6 @@
-## Objective
-Build a robust data pipeline to extract Zillow real estate data, load it into a local PostgreSQL database, and transform it to analyze quarterly house price trends across various U.S. states.
-
-## Pipeline Overview
-Extract: Gather real estate house prices from Zillow using selenium and beautiful soap for scrapping data from the web (CSV/JSON APIs).
-Load: Load the extracted data into a local storage.
-Transform: Process and clean the data, compute quarterly trends.
-Load: Loading the transform and process data into a database (Postres).
-
-## Pipeline Design
-1. Tools and Technologies
-    Data Extraction: Python (selenium, pandas)
-    Data Storage: Database (PostgreSQL)
-    Data Processing and Transformation: Pandas
-    Workflow Tool: Apache Airflow
-    Orchestration: Docker-Compose
-    Containerization: Docker
-    Local File Storage: For raw and intermediate files
-
- ## Requirements packages
-     Apache-Airflow
-     Selenium
-     psycopg2-binary
-     pandas
-     docker
-
-## Getting Started
-1. Create a python environment.
-2. clone the project using (https://github.com/cisco00/realestate-data-pipeline.git)
-3. cd realestate-data-pipeline
-4. install the requirements using (pip install requirement.txt)
-5. Setup your postgres database
-6. Build and start service but, ensure Docker and Docker Compose are installed on your system. Run (docker-compose up --build)
-
-7. Pls Note the zillow.com website is being configure every month so be sure to check your extract scripts to effect the changes being made.
-     
                                                                                     ## Zillow Real Estate Data Pipeline
+Build a robust data pipeline to extract Zillow real estate data, load it into a local PostgreSQL database, and transform it to analyze quarterly house price trends across various U.S. states.
+     
 ## Objective
 Build a robust data pipeline to extract Zillow real estate data, load it into a local PostgreSQL database, and transform it to analyze quarterly house price trends across various U.S. states.
 
