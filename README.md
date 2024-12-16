@@ -1,4 +1,4 @@
-                                                                                    ## Zillow Real Estate Data Pipeline
+# Zillow Real Estate Data Pipeline
 Build a robust data pipeline to extract Zillow real estate data, load it into a local PostgreSQL database, and transform it to analyze quarterly house price trends across various U.S. states.
      
 ## Objective
